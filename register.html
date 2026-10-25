@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+{% block bodyclass %}auth-page{% endblock %}
+
+{% block content %}
+{% set side_title = "Create an account." %}
+{% set side_text = "One account for every page. It only takes a minute and you're good to go." %}
+
+<main class="auth">
+  {% include "_auth_side.html" %}
+
+  <section class="auth-form">
+    <h1>Create an account</h1>
+    <p class="muted">Fill in the details below to create a new account.</p>
+
+    <form method="post" action="{{ url_for('register') }}" autocomplete="on">
+      <div class="field">
+        <label for="full_name">Full name</label>
+        <input id="full_name" name="full_name" type="text" value="{{ form.full_name }}"
+               placeholder="e.g. Juan Dela Cruz" required>
+      </div>
+
+      <div class="field">
+        <label for="username">Username</label>
+        <input id="username" name="username" type="text" value="{{ form.username }}"
+               placeholder="e.g. juan_dc" required>
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" value="{{ form.email }}"
+               placeholder="e.g. juan@email.com" required>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="password">Password</label>
+          <div class="input-wrap">
+            <input id="password" name="password" type="password"
+                   placeholder="8+ characters" minlength="8" required>
+            <button type="button" class="toggle" data-target="password"
+                    aria-label="Show password">Show</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="confirm_password">Confirm password</label>
+          <div class="input-wrap">
+            <input id="confirm_password" name="confirm_password" type="password"
+                   placeholder="repeat your password" minlength="8" required>
+            <button type="button" class="toggle" data-target="confirm_password"
+                    aria-label="Show password">Show</button>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn primary block" type="submit">Register</button>
+    </form>
+
+    <p class="switch">Already have an account? <a href="{{ url_for('login') }}">Log in</a></p>
+  </section>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='auth.js') }}"></script>
+{% endblock %}

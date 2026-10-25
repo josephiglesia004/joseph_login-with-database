@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}Admin{% endblock %}
+
+{% block content %}
+<main class="admin">
+  <section class="admin-head">
+    <div>
+      <p class="eyebrow">Admin</p>
+      <h1>User management</h1>
+      <p class="muted">Manage accounts — promote, demote, or delete.</p>
+    </div>
+    <span class="badge admin">Admin</span>
+  </section>
+
+  <section class="stats">
+    <div class="stat">
+      <span class="stat-label">Total users</span>
+      <strong>{{ stats.total }}</strong>
+    </div>
+    <div class="stat">
+      <span class="stat-label">Admins</span>
+      <strong>{{ stats.admins }}</strong>
+    </div>
+    <div class="stat">
+      <span class="stat-label">New accounts (7 days)</span>
+      <strong>{{ stats.new }}</strong>
+    </div>
+  </section>
+
+  <section class="table-card">
+    <header class="table-head">
+      <div>
+        <h2>Accounts</h2>
+        <p class="muted small">Everyone registered in Firebase Authentication and Firestore.</p>
+      </div>
+      <input id="user-search" type="search" placeholder="Search by name, username, or email…"
+             aria-label="Search for a user" autocomplete="off">
+    </header>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Date</th>
+            <th class="th-actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for u in users %}
+          <tr data-search="{{ (u.full_name ~ ' ' ~ u.username ~ ' ' ~ u.email)|lower }}">
+            <td>
+              <div class="user-cell">
+                <span class="mini-avatar">{{ u.initial }}</span>
+                <div class="user-meta">
+                  <strong>{{ u.full_name }}</strong>
+                  <small>@{{ u.username }}</small>
+                </div>
+              </div>
+            </td>
+            <td class="cell-email">{{ u.email }}</td>
+            <td><span class="badge {{ u.role }}">{{ u.role }}</span></td>
+            <td class="cell-date">{{ u.created_at.strftime("%b %d, %Y") if u.created_at else "—" }}</td>
+            <td class="row-actions">
+              {% if u.uid == current_uid %}
+                <span class="self-chip">You</span>
+              {% else %}
+                <form method="post" action="{{ url_for('admin_set_role', uid=u.uid) }}">
+                  <input type="hidden" name="action" value="{{ 'demote' if u.role == 'admin' else 'promote' }}">
+                  <button class="btn tiny soft" type="submit">
+                    {{ 'Make user' if u.role == 'admin' else 'Make admin' }}
+                  </button>
+                </form>
+                <form method="post" action="{{ url_for('admin_delete_user', uid=u.uid) }}"
+                      data-confirm="Delete {{ u.username }}'s account? This can't be undone.">
+                  <button class="btn tiny danger-ghost" type="submit">Delete</button>
+                </form>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% if not users %}
+      <p class="empty">No accounts yet.</p>
+    {% endif %}
+    <p class="empty" id="search-empty" hidden>No matching accounts.</p>
+  </section>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='admin.js') }}"></script>
+{% endblock %}

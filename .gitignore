@@ -1,0 +1,8 @@
+.venv/
+__pycache__/
+*.pyc
+
+# Huwag i-commit ang mga secret!
+.env
+serviceAccountKey.json
+*serviceAccountKey*.json

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block bodyclass %}auth-page{% endblock %}
+
+{% block content %}
+{% set side_title = "Welcome back." %}
+{% set side_text = "A secure login system powered by Firebase Authentication and Cloud Firestore. One account, one login." %}
+
+<main class="auth">
+  {% include "_auth_side.html" %}
+
+  <section class="auth-form">
+    <h1>Log in</h1>
+    <p class="muted">Use the username or email and password for your account.</p>
+
+    <form method="post" action="{{ url_for('login') }}" autocomplete="on">
+      <div class="field">
+        <label for="identifier">Username or email</label>
+        <input id="identifier" name="identifier" type="text" value="{{ identifier }}"
+               placeholder="e.g. juan_dc or juan@email.com" required autofocus>
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <div class="input-wrap">
+          <input id="password" name="password" type="password"
+                 placeholder="••••••••" required>
+          <button type="button" class="toggle" data-target="password"
+                  aria-label="Show password">Show</button>
+        </div>
+      </div>
+
+      <button class="btn primary block" type="submit">Login</button>
+    </form>
+
+    <p class="switch">Don't have an account? <a href="{{ url_for('register') }}">Register here</a></p>
+  </section>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='auth.js') }}"></script>
+{% endblock %}

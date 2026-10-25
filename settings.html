@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Account Settings{% endblock %}
+
+{% block content %}
+<main class="settings">
+  <header class="admin-head">
+    <div>
+      <p class="eyebrow">Account</p>
+      <h1>Account settings</h1>
+      <p class="muted">Manage your profile and account security.</p>
+    </div>
+    <a class="btn ghost" href="{{ url_for('dashboard') }}">← Dashboard</a>
+  </header>
+
+  <div class="settings-grid">
+    <section class="form-card">
+      <h2>Profile</h2>
+      <p class="muted small">The name and username shown on your dashboard.</p>
+
+      <form method="post" action="{{ url_for('update_profile') }}" autocomplete="on">
+        <div class="field">
+          <label for="full_name">Full name</label>
+          <input id="full_name" name="full_name" type="text"
+                 value="{{ profile.get('full_name', '') }}" required>
+        </div>
+
+        <div class="field">
+          <label for="username">Username</label>
+          <input id="username" name="username" type="text"
+                 value="{{ profile.get('username', '') }}" required>
+        </div>
+
+        <div class="field">
+          <label>Email</label>
+          <input type="email" value="{{ profile.get('email', '') }}" disabled>
+          <p class="field-note">Email can't be changed here. It's linked to Firebase Authentication.</p>
+        </div>
+
+        <button class="btn primary block" type="submit">Save profile</button>
+      </form>
+    </section>
+
+    <section class="form-card">
+      <h2>Password</h2>
+      <p class="muted small">You need your current password before you can set a new one.</p>
+
+      <form method="post" action="{{ url_for('update_password') }}" autocomplete="off">
+        <div class="field">
+          <label for="current_password">Current password</label>
+          <div class="input-wrap">
+            <input id="current_password" name="current_password" type="password"
+                   placeholder="••••••••" required>
+            <button type="button" class="toggle" data-target="current_password"
+                    aria-label="Show password">Show</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="new_password">New password</label>
+          <div class="input-wrap">
+            <input id="new_password" name="new_password" type="password"
+                   placeholder="8+ characters" minlength="8" required>
+            <button type="button" class="toggle" data-target="new_password"
+                    aria-label="Show password">Show</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="confirm_password">Confirm new password</label>
+          <div class="input-wrap">
+            <input id="confirm_password" name="confirm_password" type="password"
+                   placeholder="repeat the new password" minlength="8" required>
+            <button type="button" class="toggle" data-target="confirm_password"
+                    aria-label="Show password">Show</button>
+          </div>
+        </div>
+
+        <button class="btn primary block" type="submit">Change password</button>
+      </form>
+
+      <hr class="divider">
+
+      <h3>Sessions</h3>
+      <p class="muted small">
+        You're logged in on this device. If you're signed in on other devices,
+        you can log them all out at once.
+      </p>
+      <form method="post" action="{{ url_for('logout_all') }}"
+            data-confirm="This will log you out on all devices, including this one. Continue?">
+        <button class="btn danger-ghost block" type="submit">Log out of all devices</button>
+      </form>
+    </section>
+  </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='auth.js') }}"></script>
+{% endblock %}

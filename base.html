@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Login System{% endblock %} · Joseph.login with database</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="{% block bodyclass %}{% endblock %}">
+  <div class="page">
+    <header class="topbar">
+      <a class="brand" href="{{ url_for('dashboard') if session.get('session_cookie') else url_for('login') }}">
+        Joseph<span>.login</span><em class="brand-sub">with database</em>
+      </a>
+      {% if session.get('session_cookie') %}
+      <nav class="topnav">
+        <a class="nav-link {{ 'active' if request.endpoint == 'dashboard' }}" href="{{ url_for('dashboard') }}">Dashboard</a>
+        {% if is_admin %}
+        <a class="nav-link {{ 'active' if request.endpoint == 'admin_users' }}" href="{{ url_for('admin_users') }}">Admin</a>
+        {% endif %}
+        <a class="nav-link {{ 'active' if request.endpoint == 'settings' }}" href="{{ url_for('settings') }}">Settings</a>
+        <span class="user-chip">{{ session.get('full_name') or session.get('username') }}</span>
+        <form method="post" action="{{ url_for('logout') }}">
+          <button type="submit" class="btn ghost">Logout</button>
+        </form>
+      </nav>
+      {% endif %}
+    </header>
+
+    {% if not firebase_ready %}
+      <div class="alert warning">
+        <strong>Firebase isn't set up yet.</strong>
+        Add <code>serviceAccountKey.json</code> and <code>FIREBASE_API_KEY</code> to <code>.env</code>.
+        See <code>README.md</code> for the step-by-step guide.
+        {% if firebase_error %}<br><small>{{ firebase_error }}</small>{% endif %}
+      </div>
+    {% endif %}
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="alerts">
+          {% for category, message in messages %}
+            <div class="alert {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+
+    <footer class="footer">Flask + Firebase (Auth + Firestore) · {{ current_year }}</footer>
+  </div>
+
+  {% block scripts %}{% endblock %}
+  <script src="{{ url_for('static', filename='ui.js') }}"></script>
+</body>
+</html>

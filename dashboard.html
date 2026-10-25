@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<main class="dash">
+  <section class="welcome">
+    <div class="avatar">{{ user.full_name[:1]|upper }}</div>
+    <div class="welcome-text">
+      <p class="eyebrow">
+        Dashboard
+        <span class="badge {{ user.role }}">{{ user.role }}</span>
+      </p>
+      <h1>{{ greeting }}, {{ user.full_name }}!</h1>
+      <p class="muted">You're logged in with Firebase Authentication. Here's a summary of your account.</p>
+    </div>
+    {% if is_admin %}
+      <a class="btn ghost btn-small" href="{{ url_for('admin_users') }}">Admin</a>
+    {% endif %}
+  </section>
+
+  <section class="summary">
+    <div class="summary-card">
+      <span class="summary-label">Role</span>
+      <strong>{{ user.role|capitalize }}</strong>
+      <small>{{ "Has access to the admin panel" if is_admin else "Standard user access" }}</small>
+    </div>
+    <div class="summary-card">
+      <span class="summary-label">Days as a member</span>
+      <strong>{{ days_active if days_active else "—" }}</strong>
+      <small>
+        {% if user.created_at %}
+          Member since {{ user.created_at.strftime("%b %d, %Y") }}
+        {% else %}
+          New account
+        {% endif %}
+      </small>
+    </div>
+    <div class="summary-card">
+      <span class="summary-label">Last login</span>
+      <strong class="summary-date">
+        {{ user.last_login.strftime("%b %d, %I:%M %p") if user.last_login else "—" }}
+      </strong>
+      <small>Session valid for {{ session_days }} days</small>
+    </div>
+  </section>
+
+  <section class="details-card">
+    <header class="card-head">
+      <div>
+        <h2>Account details</h2>
+        <p class="muted small">The information saved in Firebase Authentication and Cloud Firestore.</p>
+      </div>
+      <a class="btn tiny soft" href="{{ url_for('settings') }}">Edit</a>
+    </header>
+
+    <div class="detail-list">
+      <div class="detail-row">
+        <span class="detail-label">Username</span>
+        <div class="detail-value">
+          <span class="mono">@{{ user.username }}</span>
+          <button type="button" class="copy" data-copy="{{ user.username }}">Copy</button>
+        </div>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Email</span>
+        <div class="detail-value">
+          <span>{{ user.email }}</span>
+          <button type="button" class="copy" data-copy="{{ user.email }}">Copy</button>
+        </div>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Date joined</span>
+        <div class="detail-value">
+          <span>{{ user.created_at.strftime("%B %d, %Y · %I:%M %p") if user.created_at else "—" }}</span>
+        </div>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Firebase UID</span>
+        <div class="detail-value">
+          <span class="mono">{{ user.uid }}</span>
+          <button type="button" class="copy" data-copy="{{ user.uid }}">Copy</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="quick-actions">
+    <a class="action-card" href="{{ url_for('settings') }}">
+      <span class="action-icon">⚙</span>
+      <span class="action-text">
+        <strong>Account settings</strong>
+        <small>Change your name, username, or password</small>
+      </span>
+    </a>
+
+    {% if is_admin %}
+      <a class="action-card" href="{{ url_for('admin_users') }}">
+        <span class="action-icon">◈</span>
+        <span class="action-text">
+          <strong>Admin dashboard</strong>
+          <small>Manage users and roles</small>
+        </span>
+      </a>
+    {% endif %}
+
+    <form method="post" action="{{ url_for('logout') }}" class="action-card action-form">
+      <button type="submit" class="action-button">
+        <span class="action-icon">⏻</span>
+        <span class="action-text">
+          <strong>Logout</strong>
+          <small>End the session on this device</small>
+        </span>
+      </button>
+    </form>
+  </section>
+</main>
+{% endblock %}
